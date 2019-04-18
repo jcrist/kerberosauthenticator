@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>kerberosauthenticator &#8212; kerberos-authenticator 0+untagged.13.g0722a5e documentation</title>
+    <title>kerberosauthenticator &#8212; kerberos-authenticator 0+untagged.14.g22e7b1e documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -34,8 +34,16 @@
   <div class="section" id="kerberosauthenticator">
 <h1>kerberosauthenticator<a class="headerlink" href="#kerberosauthenticator" title="Permalink to this headline">¶</a></h1>
 <p>An <a class="reference external" href="https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html">Authenticator</a> for <a class="reference external" href="https://jupyterhub.readthedocs.io/en/stable/">JupyterHub</a> that authenticates using <a class="reference external" href="https://web.mit.edu/kerberos/">Kerberos</a>.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#installation" id="id1">Installation</a></p></li>
+<li><p><a class="reference internal" href="#configuration" id="id2">Configuration</a></p></li>
+<li><p><a class="reference internal" href="#enabling-kerberos-authentication-in-your-browser" id="id3">Enabling Kerberos Authentication in Your Browser</a></p></li>
+<li><p><a class="reference internal" href="#additional-resources" id="id4">Additional Resources</a></p></li>
+</ul>
+</div>
 <div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">kerberosauthenticator</span></code> should be installed in the same Python environment as
 the JupyterHub server.</p>
 <p><strong>Install with Pip:</strong></p>
@@ -48,7 +56,7 @@ the JupyterHub server.</p>
 </div>
 </div>
 <div class="section" id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Configuration</a><a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>Kerberos authentication requires a keytab for the <code class="docutils literal notranslate"><span class="pre">HTTP</span></code> service principle
 for the host running JupyterHub. Keytabs can be created on the command-line as
 follows:</p>
@@ -78,8 +86,14 @@ $ chown jupyterhub:admin /etc/jupyterhub/HTTP.keytab
 several other options such as whitelists or post-auth hooks. For more
 information on all configuration options, see <a class="reference internal" href="options.html"><span class="doc">Configuration Options</span></a>.</p>
 </div>
+<div class="section" id="enabling-kerberos-authentication-in-your-browser">
+<h2><a class="toc-backref" href="#id3">Enabling Kerberos Authentication in Your Browser</a><a class="headerlink" href="#enabling-kerberos-authentication-in-your-browser" title="Permalink to this headline">¶</a></h2>
+<p>For Kerberos authentication to work properly, you usually have to enable
+support for it in your browser. For more information see <a class="reference external" href="https://www.cloudera.com/documentation/enterprise/5-12-x/topics/cdh_sg_browser_access_kerberos_protected_url.html">this guide from
+Cloudera</a>.</p>
+</div>
 <div class="section" id="additional-resources">
-<h2>Additional Resources<a class="headerlink" href="#additional-resources" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Additional Resources</a><a class="headerlink" href="#additional-resources" title="Permalink to this headline">¶</a></h2>
 <p>If you’re interested in <code class="docutils literal notranslate"><span class="pre">kerberosauthenticator</span></code>, you may also be interested
 in a few other libraries:</p>
 <ul class="simple">
