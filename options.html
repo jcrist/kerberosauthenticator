@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Configuration Options &#8212; kerberos-authenticator 0+untagged.11.g45e2e15 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="kerberosauthenticator" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="configuration-options">
+<h1>Configuration Options<a class="headerlink" href="#configuration-options" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="kerberosauthenticator.KerberosAuthenticator">
+<em class="property">class </em><code class="descclassname">kerberosauthenticator.</code><code class="descname">KerberosAuthenticator</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosAuthenticator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kerberos Authenticator for JupyterHub</p>
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.admin_users = Set()</code></dt>
+<dd><p>Set of users that will have admin rights on this JupyterHub.</p>
+<dl class="simple">
+<dt>Admin users have extra privileges:</dt><dd><ul class="simple">
+<li><p>Use the admin panel to see list of users logged in</p></li>
+<li><p>Add / remove users in some authenticators</p></li>
+<li><p>Restart / halt the hub</p></li>
+<li><p>Start / stop users’ single-user servers</p></li>
+<li><p>Can access each individual users’ single-user server (if configured)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Admin access should be treated the same way root access is.</p>
+<p>Defaults to an empty set, in which case no user has admin access.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.auto_login = Bool(False)</code></dt>
+<dd><p>Automatically begin the login process</p>
+<p>rather than starting with a “Login with…” link at <cite>/hub/login</cite></p>
+<p>To work, <cite>.login_url()</cite> must give a URL other than the default <cite>/hub/login</cite>,
+such as an oauth handler or another automatic login handler,
+registered with <cite>.get_handlers()</cite>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.8.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.blacklist = Set()</code></dt>
+<dd><p>Blacklist of usernames that are not allowed to log in.</p>
+<p>Use this with supported authenticators to restrict which users can not log in. This is an
+additional blacklist that further restricts users, beyond whatever restrictions the
+authenticator has in place.</p>
+<p>If empty, does not perform any additional restriction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.enable_auth_state = Bool(False)</code></dt>
+<dd><p>Enable persisting auth_state (if available).</p>
+<p>auth_state will be encrypted and stored in the Hub’s database.
+This can include things like authentication tokens, etc.
+to be passed to Spawners as environment variables.</p>
+<p>Encrypting auth_state requires the cryptography package.</p>
+<p>Additionally, the JUPYTERHUB_CRYPT_KEY environment variable must
+contain one (or more, separated by ;) 32B encryption keys.
+These can be either base64 or hex-encoded.</p>
+<p>If encryption is unavailable, auth_state cannot be persisted.</p>
+<p>New in JupyterHub 0.8</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.keytab = Unicode('HTTP.keytab')</code></dt>
+<dd><p>The path to the keytab file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.service_name = Unicode('HTTP')</code></dt>
+<dd><p>The service’s kerberos principal name.</p>
+<p>This is almost always “HTTP” (the default)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.username_map = Dict()</code></dt>
+<dd><p>Dictionary mapping authenticator usernames to JupyterHub users.</p>
+<p>Primarily used to normalize OAuth user names to local users.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.username_pattern = Unicode('')</code></dt>
+<dd><p>Regular expression pattern that all valid usernames must match.</p>
+<p>If a username does not match the pattern specified here, authentication will not be attempted.</p>
+<p>If not set, allow any username.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">config c.KerberosAuthenticator.whitelist = Set()</code></dt>
+<dd><p>Whitelist of usernames that are allowed to log in.</p>
+<p>Use this with supported authenticators to restrict which users can log in. This is an
+additional whitelist that further restricts users, beyond whatever restrictions the
+authenticator has in place.</p>
+<p>If empty, does not perform any additional restriction.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">kerberos-authenticator</a></h1>
+
+
+
+<p class="blurb">A JupyterHub Authenticator using Kerberos</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jcrist&repo=kerberosauthenticator&type=watch&count=False&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/jcrist/kerberosauthenticator">
+    <img
+        alt="https://secure.travis-ci.org/jcrist/kerberosauthenticator.svg?branch=master"
+        src="https://secure.travis-ci.org/jcrist/kerberosauthenticator.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Options</a></li>
+</ul>
+
+<h3>Need help?</h3>
+
+<p>
+  Open an issue in the <a href="https://github.com/jcrist/kerberosauthenticator/issues">issue tracker</a>.
+</p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Jim Crist.
+      
+      |
+      <a href="_sources/options.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

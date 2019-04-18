@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>kerberosauthenticator &#8212; kerberos-authenticator 0+untagged.11.g45e2e15 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration Options" href="options.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="kerberosauthenticator">
+<h1>kerberosauthenticator<a class="headerlink" href="#kerberosauthenticator" title="Permalink to this headline">¶</a></h1>
+<p>An <a class="reference external" href="https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html">Authenticator</a> for <a class="reference external" href="https://jupyterhub.readthedocs.io/en/stable/">JupyterHub</a> that authenticates using <a class="reference external" href="https://web.mit.edu/kerberos/">Kerberos</a>.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">kerberosauthenticator</span></code> should be installed in the same Python environment as
+the JupyterHub server.</p>
+<p><strong>Install with Pip:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyterhub</span><span class="o">-</span><span class="n">kerberosauthenticator</span>
+</pre></div>
+</div>
+<p><strong>Install from source:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">jcrist</span><span class="o">/</span><span class="n">kerberosauthenticator</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Kerberos authentication requires a keytab for the <code class="docutils literal notranslate"><span class="pre">HTTP</span></code> service principle
+for the host running JupyterHub. Keytabs can be created on the command-line as
+follows:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ kadmin -q <span class="s2">&quot;addprinc -randkey HTTP/FQDN&quot;</span>
+$ kadmin -q <span class="s2">&quot;xst -norandkey -k HTTP.keytab HTTP/FQDN&quot;</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">FQDN</span></code> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Fully_qualified_domain_name">fully qualified domain name</a> of the host running
+JupyterHub. This keytab should be readable only by admins and other services
+that may need it, and is typically stored with the JupyterHub configuration at
+<code class="docutils literal notranslate"><span class="pre">/etc/jupyterhub/HTTP.keytab</span></code>:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Move the keytab to some expected location</span>
+$ mv HTTP.keytab /etc/jupyterhub/HTTP.keytab
+
+<span class="c1"># Make the keytab readable/writable only by jupyterhub and the admin group</span>
+$ chmod <span class="m">440</span> /etc/jupyterhub/HTTP.keytab
+$ chown jupyterhub:admin /etc/jupyterhub/HTTP.keytab
+</pre></div>
+</div>
+<p>To enable <code class="docutils literal notranslate"><span class="pre">kerberosauthenticator</span></code>, add the following lines to your
+<code class="docutils literal notranslate"><span class="pre">jupyterhub_config.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">JupyterHub</span><span class="o">.</span><span class="n">authenticator_class</span> <span class="o">=</span> <span class="s1">&#39;kerberosauthenticator.KerberosAuthenticator&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">JupyterHub</span><span class="o">.</span><span class="n">keytab</span> <span class="o">=</span> <span class="s1">&#39;/etc/jupyterhub/HTTP.keytab&#39;</span>
+</pre></div>
+</div>
+<p>For many systems these parameters will be sufficient. <a class="reference external" href="https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html">Authenticators</a> support
+several other options such as whitelists or post-auth hooks. For more
+information on all configuration options, see <a class="reference internal" href="options.html"><span class="doc">Configuration Options</span></a>.</p>
+</div>
+<div class="section" id="additional-resources">
+<h2>Additional Resources<a class="headerlink" href="#additional-resources" title="Permalink to this headline">¶</a></h2>
+<p>If you’re interested in <code class="docutils literal notranslate"><span class="pre">kerberosauthenticator</span></code>, you may also be interested
+in a few other libraries:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jupyterhub/ldapauthenticator">ldapauthenticator</a>: A JupyterHub authenticator that uses <a class="reference external" href="https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol">LDAP</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/cwaldbieser/jhub_remote_user_authenticator">jhub_remote_user_authenticator</a>: A JupyterHub authenticator that uses the
+<code class="docutils literal notranslate"><span class="pre">REMOTE_USER</span></code> header, intended to be used with authenticaticating proxies.</p></li>
+</ul>
+<p>A (not complete) list of other authenticators can be found in the <a class="reference external" href="https://github.com/jupyterhub/jupyterhub/wiki/Authenticators">JupyterHub
+Wiki</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">kerberos-authenticator</a></h1>
+
+
+
+<p class="blurb">A JupyterHub Authenticator using Kerberos</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jcrist&repo=kerberosauthenticator&type=watch&count=False&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/jcrist/kerberosauthenticator">
+    <img
+        alt="https://secure.travis-ci.org/jcrist/kerberosauthenticator.svg?branch=master"
+        src="https://secure.travis-ci.org/jcrist/kerberosauthenticator.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Configuration Options</a></li>
+</ul>
+
+<h3>Need help?</h3>
+
+<p>
+  Open an issue in the <a href="https://github.com/jcrist/kerberosauthenticator/issues">issue tracker</a>.
+</p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Jim Crist.
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
