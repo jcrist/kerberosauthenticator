@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Configuration Options &#8212; kerberos-authenticator 0.1.0+1.g210ea59 documentation</title>
+    <title>Configuration Options &#8212; kerberos-authenticator 0.1.0+2.g2cfa6fb documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,11 +35,11 @@
 <h1>Configuration Options<a class="headerlink" href="#configuration-options" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="kerberosauthenticator.KerberosAuthenticator">
-<em class="property">class </em><code class="descclassname">kerberosauthenticator.</code><code class="descname">KerberosAuthenticator</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosAuthenticator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kerberosauthenticator.</code><code class="sig-name descname">KerberosAuthenticator</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosAuthenticator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kerberos Authenticator for JupyterHub</p>
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.admin_users = Set()</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.admin_users = Set()</code></dt>
 <dd><p>Set of users that will have admin rights on this JupyterHub.</p>
 <dl class="simple">
 <dt>Admin users have extra privileges:</dt><dd><ul class="simple">
@@ -57,7 +57,17 @@
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.auto_login = Bool(False)</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.auth_refresh_age = Int(300)</code></dt>
+<dd><p>The max age (in seconds) of authentication info
+before forcing a refresh of user auth info.</p>
+<p>Refreshing auth info allows, e.g. requesting/re-validating auth tokens.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">refresh_user()</span></code> for what happens when user auth info is refreshed
+(nothing by default).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.auto_login = Bool(False)</code></dt>
 <dd><p>Automatically begin the login process</p>
 <p>rather than starting with a “Login with…” link at <cite>/hub/login</cite></p>
 <p>To work, <cite>.login_url()</cite> must give a URL other than the default <cite>/hub/login</cite>,
@@ -70,7 +80,7 @@ registered with <cite>.get_handlers()</cite>.</p>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.blacklist = Set()</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.blacklist = Set()</code></dt>
 <dd><p>Blacklist of usernames that are not allowed to log in.</p>
 <p>Use this with supported authenticators to restrict which users can not log in. This is an
 additional blacklist that further restricts users, beyond whatever restrictions the
@@ -80,7 +90,7 @@ authenticator has in place.</p>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.enable_auth_state = Bool(False)</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.enable_auth_state = Bool(False)</code></dt>
 <dd><p>Enable persisting auth_state (if available).</p>
 <p>auth_state will be encrypted and stored in the Hub’s database.
 This can include things like authentication tokens, etc.
@@ -95,27 +105,69 @@ These can be either base64 or hex-encoded.</p>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.keytab = Unicode('HTTP.keytab')</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.keytab = Unicode('HTTP.keytab')</code></dt>
 <dd><p>The path to the keytab file</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.service_name = Unicode('HTTP')</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.post_auth_hook = Any(None)</code></dt>
+<dd><p>An optional hook function that you can implement to do some
+bootstrapping work during authentication. For example, loading user account
+details from an external system.</p>
+<p>This function is called after the user has passed all authentication checks
+and is ready to successfully authenticate. This function must return the
+authentication dict reguardless of changes to it.</p>
+<p>This maybe a coroutine.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">pwd</span>
+<span class="k">def</span> <span class="nf">my_hook</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">authentication</span><span class="p">):</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="n">spawn_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;pw_data&#39;</span><span class="p">:</span> <span class="n">user_data</span>
+        <span class="s1">&#39;gid_list&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getgrouplist</span><span class="p">(</span><span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">user_data</span><span class="o">.</span><span class="n">pw_gid</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">][</span><span class="s1">&#39;spawn_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spawn_data</span>
+
+    <span class="k">return</span> <span class="n">authentication</span>
+
+<span class="n">c</span><span class="o">.</span><span class="n">Authenticator</span><span class="o">.</span><span class="n">post_auth_hook</span> <span class="o">=</span> <span class="n">my_hook</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.refresh_pre_spawn = Bool(False)</code></dt>
+<dd><p>Force refresh of auth prior to spawn.</p>
+<p>This forces <code class="xref py py-meth docutils literal notranslate"><span class="pre">refresh_user()</span></code> to be called prior to launching
+a server, to ensure that auth state is up-to-date.</p>
+<p>This can be important when e.g. auth tokens that may have expired
+are passed to the spawner via environment variables from auth_state.</p>
+<p>If refresh_user cannot refresh the user auth data,
+launch will fail until the user logs in again.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.service_name = Unicode('HTTP')</code></dt>
 <dd><p>The service’s kerberos principal name.</p>
 <p>This is almost always “HTTP” (the default)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.username_map = Dict()</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.username_map = Dict()</code></dt>
 <dd><p>Dictionary mapping authenticator usernames to JupyterHub users.</p>
 <p>Primarily used to normalize OAuth user names to local users.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.username_pattern = Unicode('')</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.username_pattern = Unicode('')</code></dt>
 <dd><p>Regular expression pattern that all valid usernames must match.</p>
 <p>If a username does not match the pattern specified here, authentication will not be attempted.</p>
 <p>If not set, allow any username.</p>
@@ -123,7 +175,195 @@ These can be either base64 or hex-encoded.</p>
 
 <dl class="attribute">
 <dt>
-<code class="descname">config c.KerberosAuthenticator.whitelist = Set()</code></dt>
+<code class="sig-name descname">config c.KerberosAuthenticator.whitelist = Set()</code></dt>
+<dd><p>Whitelist of usernames that are allowed to log in.</p>
+<p>Use this with supported authenticators to restrict which users can log in. This is an
+additional whitelist that further restricts users, beyond whatever restrictions the
+authenticator has in place.</p>
+<p>If empty, does not perform any additional restriction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="kerberosauthenticator.KerberosLocalAuthenticator">
+<em class="property">class </em><code class="sig-prename descclassname">kerberosauthenticator.</code><code class="sig-name descname">KerberosLocalAuthenticator</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosLocalAuthenticator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kerberos local authenticator for JupyterHub</p>
+<p>Checks for local users, and can attempt to create them if they exist.</p>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.add_user_cmd = Command()</code></dt>
+<dd><p>The command to use for creating users as a list of strings</p>
+<p>For each element in the list, the string USERNAME will be replaced with
+the user’s username. The username will also be appended as the final argument.</p>
+<p>For Linux, the default value is:</p>
+<blockquote>
+<div><p>[‘adduser’, ‘-q’, ‘–gecos’, ‘”“’, ‘–disabled-password’]</p>
+</div></blockquote>
+<p>To specify a custom home directory, set this to:</p>
+<blockquote>
+<div><p>[‘adduser’, ‘-q’, ‘–gecos’, ‘”“’, ‘–home’, ‘/customhome/USERNAME’, ‘–disabled-password’]</p>
+</div></blockquote>
+<p>This will run the command:</p>
+<blockquote>
+<div><p>adduser -q –gecos “” –home /customhome/river –disabled-password river</p>
+</div></blockquote>
+<p>when the user ‘river’ is created.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.admin_users = Set()</code></dt>
+<dd><p>Set of users that will have admin rights on this JupyterHub.</p>
+<dl class="simple">
+<dt>Admin users have extra privileges:</dt><dd><ul class="simple">
+<li><p>Use the admin panel to see list of users logged in</p></li>
+<li><p>Add / remove users in some authenticators</p></li>
+<li><p>Restart / halt the hub</p></li>
+<li><p>Start / stop users’ single-user servers</p></li>
+<li><p>Can access each individual users’ single-user server (if configured)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Admin access should be treated the same way root access is.</p>
+<p>Defaults to an empty set, in which case no user has admin access.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.auth_refresh_age = Int(300)</code></dt>
+<dd><p>The max age (in seconds) of authentication info
+before forcing a refresh of user auth info.</p>
+<p>Refreshing auth info allows, e.g. requesting/re-validating auth tokens.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">refresh_user()</span></code> for what happens when user auth info is refreshed
+(nothing by default).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.auto_login = Bool(False)</code></dt>
+<dd><p>Automatically begin the login process</p>
+<p>rather than starting with a “Login with…” link at <cite>/hub/login</cite></p>
+<p>To work, <cite>.login_url()</cite> must give a URL other than the default <cite>/hub/login</cite>,
+such as an oauth handler or another automatic login handler,
+registered with <cite>.get_handlers()</cite>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.8.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.blacklist = Set()</code></dt>
+<dd><p>Blacklist of usernames that are not allowed to log in.</p>
+<p>Use this with supported authenticators to restrict which users can not log in. This is an
+additional blacklist that further restricts users, beyond whatever restrictions the
+authenticator has in place.</p>
+<p>If empty, does not perform any additional restriction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.create_system_users = Bool(False)</code></dt>
+<dd><p>If set to True, will attempt to create local system users if they do not exist already.</p>
+<p>Supports Linux and BSD variants only.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.enable_auth_state = Bool(False)</code></dt>
+<dd><p>Enable persisting auth_state (if available).</p>
+<p>auth_state will be encrypted and stored in the Hub’s database.
+This can include things like authentication tokens, etc.
+to be passed to Spawners as environment variables.</p>
+<p>Encrypting auth_state requires the cryptography package.</p>
+<p>Additionally, the JUPYTERHUB_CRYPT_KEY environment variable must
+contain one (or more, separated by ;) 32B encryption keys.
+These can be either base64 or hex-encoded.</p>
+<p>If encryption is unavailable, auth_state cannot be persisted.</p>
+<p>New in JupyterHub 0.8</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.group_whitelist = Set()</code></dt>
+<dd><p>Whitelist all users from this UNIX group.</p>
+<p>This makes the username whitelist ineffective.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.keytab = Unicode('HTTP.keytab')</code></dt>
+<dd><p>The path to the keytab file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.post_auth_hook = Any(None)</code></dt>
+<dd><p>An optional hook function that you can implement to do some
+bootstrapping work during authentication. For example, loading user account
+details from an external system.</p>
+<p>This function is called after the user has passed all authentication checks
+and is ready to successfully authenticate. This function must return the
+authentication dict reguardless of changes to it.</p>
+<p>This maybe a coroutine.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">pwd</span>
+<span class="k">def</span> <span class="nf">my_hook</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">authentication</span><span class="p">):</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="n">spawn_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;pw_data&#39;</span><span class="p">:</span> <span class="n">user_data</span>
+        <span class="s1">&#39;gid_list&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getgrouplist</span><span class="p">(</span><span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">user_data</span><span class="o">.</span><span class="n">pw_gid</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">authentication</span><span class="p">[</span><span class="s1">&#39;auth_state&#39;</span><span class="p">][</span><span class="s1">&#39;spawn_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spawn_data</span>
+
+    <span class="k">return</span> <span class="n">authentication</span>
+
+<span class="n">c</span><span class="o">.</span><span class="n">Authenticator</span><span class="o">.</span><span class="n">post_auth_hook</span> <span class="o">=</span> <span class="n">my_hook</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.refresh_pre_spawn = Bool(False)</code></dt>
+<dd><p>Force refresh of auth prior to spawn.</p>
+<p>This forces <code class="xref py py-meth docutils literal notranslate"><span class="pre">refresh_user()</span></code> to be called prior to launching
+a server, to ensure that auth state is up-to-date.</p>
+<p>This can be important when e.g. auth tokens that may have expired
+are passed to the spawner via environment variables from auth_state.</p>
+<p>If refresh_user cannot refresh the user auth data,
+launch will fail until the user logs in again.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.service_name = Unicode('HTTP')</code></dt>
+<dd><p>The service’s kerberos principal name.</p>
+<p>This is almost always “HTTP” (the default)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.username_map = Dict()</code></dt>
+<dd><p>Dictionary mapping authenticator usernames to JupyterHub users.</p>
+<p>Primarily used to normalize OAuth user names to local users.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.username_pattern = Unicode('')</code></dt>
+<dd><p>Regular expression pattern that all valid usernames must match.</p>
+<p>If a username does not match the pattern specified here, authentication will not be attempted.</p>
+<p>If not set, allow any username.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">config c.KerberosLocalAuthenticator.whitelist = Set()</code></dt>
 <dd><p>Whitelist of usernames that are allowed to log in.</p>
 <p>Use this with supported authenticators to restrict which users can log in. This is an
 additional whitelist that further restricts users, beyond whatever restrictions the
@@ -183,10 +423,10 @@ authenticator has in place.</p>
   Open an issue in the <a href="https://github.com/jcrist/kerberosauthenticator/issues">issue tracker</a>.
 </p>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
