@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Configuration Options &#8212; kerberos-authenticator 0.2.0 documentation</title>
+    <title>Configuration Options &#8212; kerberos-authenticator 0.2.0+1.g97f32e3 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -33,6 +33,8 @@
             
   <div class="section" id="configuration-options">
 <h1>Configuration Options<a class="headerlink" href="#configuration-options" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="kerberosauthenticator">
+<h2>KerberosAuthenticator<a class="headerlink" href="#kerberosauthenticator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kerberosauthenticator.KerberosAuthenticator">
 <em class="property">class </em><code class="sig-prename descclassname">kerberosauthenticator.</code><code class="sig-name descname">KerberosAuthenticator</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosAuthenticator" title="Permalink to this definition">¶</a></dt>
@@ -185,11 +187,14 @@ authenticator has in place.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="kerberoslocalauthenticator">
+<h2>KerberosLocalAuthenticator<a class="headerlink" href="#kerberoslocalauthenticator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kerberosauthenticator.KerberosLocalAuthenticator">
 <em class="property">class </em><code class="sig-prename descclassname">kerberosauthenticator.</code><code class="sig-name descname">KerberosLocalAuthenticator</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kerberosauthenticator.KerberosLocalAuthenticator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kerberos local authenticator for JupyterHub</p>
-<p>Checks for local users, and can attempt to create them if they exist.</p>
+<p>Checks for local users, and can attempt to create them if they don’t exist.</p>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">config c.KerberosLocalAuthenticator.add_user_cmd = Command()</code></dt>
@@ -374,6 +379,7 @@ authenticator has in place.</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -414,7 +420,11 @@ authenticator has in place.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Options</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#kerberosauthenticator">KerberosAuthenticator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kerberoslocalauthenticator">KerberosLocalAuthenticator</a></li>
+</ul>
+</li>
 </ul>
 
 <h3>Need help?</h3>
